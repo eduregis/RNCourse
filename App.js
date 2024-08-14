@@ -23,9 +23,9 @@ export default function App() {
     setGameIsOver(false);
   }
 
-  function gameOverHandler() {
-    console.log(userNumber);
+  function gameOverHandler(numberOfRounds) {
     setGameIsOver(true);
+    setGuessRounds(numberOfRounds);
   }
 
   function startNewGameHandler() {

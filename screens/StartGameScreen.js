@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { TextInput, View, StyleSheet, Alert } from "react-native";
 
-import GameTitle from "../components/ui/Title";
+import GameTitle from "../components/ui/GameTitle";
 import PrimaryButton from "../components/ui/PrimaryButton";
 import Colors from "../utils/colors";
 import Card from "../components/ui/Card";
