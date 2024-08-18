@@ -1,48 +1,59 @@
-import { useLayoutEffect } from "react";
+import { useContext, useLayoutEffect } from "react";
 import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
 import MealInfo from "../components/MealInfo";
 import Subtitle from "../components/MealDetails/Subtitle";
 import DetailsList from "../components/MealDetails/DetailsList";
 import IconButton from "../components/IconButton";
+import { FavoritesContext } from "../store/context/favorite-context";
+import { MEALS } from "../data/dummy-data";
 
 function MealDetailsScreen({ route, navigation }) {
-  const meal = route.params.meal;
+  const favoriteMealsCtx = useContext(FavoritesContext);
 
-  function headerButtonPressHandler() {
-    console.log("Pressed!");
+  const mealId = route.params.mealId;
+  const selectedMeal = MEALS.find((meal) => meal.id === mealId);
+
+  const mealIsFavorite = favoriteMealsCtx.ids.includes(mealId);
+
+  function changeFavoriteStatusHandler() {
+    if (mealIsFavorite) {
+      favoriteMealsCtx.removeFavorite(selectedMeal.id);
+    } else {
+      favoriteMealsCtx.addFavorite(selectedMeal.id);
+    }
   }
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: meal.title,
+      title: selectedMeal.title,
       headerRight: () => {
         return (
           <IconButton
-            icon={"star"}
+            icon={mealIsFavorite ? "star" : "star-o"}
             color={"white"}
-            onPress={headerButtonPressHandler}
+            onPress={changeFavoriteStatusHandler}
           />
         );
       },
     });
-  }, [meal, navigation]);
+  }, [selectedMeal, navigation]);
 
   return (
     <ScrollView style={styles.container}>
-      <Image source={{ uri: meal.imageUrl }} style={styles.image} />
-      <Text style={styles.title}>{meal.title}</Text>
+      <Image source={{ uri: selectedMeal.imageUrl }} style={styles.image} />
+      <Text style={styles.title}>{selectedMeal.title}</Text>
       <MealInfo
-        duration={meal.duration}
-        complexity={meal.complexity}
-        affordability={meal.affordability}
+        duration={selectedMeal.duration}
+        complexity={selectedMeal.complexity}
+        affordability={selectedMeal.affordability}
         textStyle={styles.detailText}
       />
       <View style={styles.listOuterContainer}>
         <View style={styles.listContainer}>
           <Subtitle text="Ingredients" />
-          <DetailsList data={meal.ingredients} />
+          <DetailsList data={selectedMeal.ingredients} />
           <Subtitle text="Steps" />
-          <DetailsList data={meal.steps} />
+          <DetailsList data={selectedMeal.steps} />
         </View>
       </View>
     </ScrollView>
